@@ -1,0 +1,35 @@
+version: '3.9'
+
+networks:
+  arbitrum:
+
+volumes:
+  arbitrum-nitro-db:
+  arbitrum-nitro-genesis:
+  arbitrum-nitro-global-config:
+
+services:
+  arbitrum-nitro:
+    user: root
+    image: offchainlabs/nitro-node:v2.0.11-8e786ec
+    container_name: arbitrum-nitro
+    restart: unless-stopped
+    command: |
+      --init.url=file:/arbitrum-nitro-genesis/nitro.tar
+      --l1.url=ryzhman
+      --l2.chain-id=42161
+      --http.addr=0.0.0.0
+      --http.port=8161
+      --http.vhosts=*
+      --http.corsdomain=*
+      --http.api=net,web3,eth
+      --persistent.chain=/arbitrum-nitro-db
+      --persistent.global-config=/arbitrum-nitro-global-config
+    networks:
+      - arbitrum
+    ports:
+      - 8161:8161
+    volumes:
+      - arbitrum-nitro-db:/arbitrum-nitro-db
+      - arbitrum-nitro-genesis:/arbitrum-nitro-genesis
+      - arbitrum-nitro-global-config:/arbitrum-nitro-global-config
